@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SparkCopy - 小紅書爆款文案生成器</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sparkPink: '#ff2d78',
+                        sparkDark: '#121212',
+                        sparkLightPink: '#ffe6f0',
+                        sparkYellow: '#ffd600',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 復古拼貼感與特殊視覺效果 */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            background-image: radial-gradient(rgba(255, 45, 120, 0.15) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+        .brutal-border {
+            border: 3px solid #121212;
+            box-shadow: 4px 4px 0px #121212;
+            transition: all 0.2s ease;
+        }
+        .brutal-border-pink {
+            border: 3px solid #121212;
+            box-shadow: 4px 4px 0px #ff2d78;
+        }
+        .brutal-btn {
+            border: 3px solid #121212;
+            box-shadow: 4px 4px 0px #121212;
+            transition: all 0.1s ease;
+        }
+        .brutal-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0px #121212;
+        }
+        .brutal-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #121212;
+        }
+        .spark-card {
+            background: #fff8fb;
+            color: #1a1a1a;
+            border: 3px solid #121212;
+            box-shadow: 6px 6px 0px #ff2d78;
+        }
+        /* 閃爍星芒裝飾 */
+        .sparkle {
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.9); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between font-sans selection:bg-sparkPink selection:text-white">
+
+    <!-- 頂部導航欄 -->
+    <header class="w-full bg-sparkPink border-b-4 border-sparkDark py-4 px-6 md:px-12 flex justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <span class="text-3xl">✨</span>
+            <h1 class="text-2xl md:text-3xl font-black tracking-wider text-white uppercase drop-shadow-[2px_2px_0px_#121212]">
+                SparkCopy <span class="text-xs bg-sparkYellow text-sparkDark px-2 py-1 rounded font-bold border-2 border-sparkDark ml-2 inline-block">PRO</span>
+            </h1>
+        </div>
+        <p class="hidden sm:block text-xs md:text-sm font-bold bg-white text-sparkDark px-3 py-1.5 rounded-full border-2 border-sparkDark">
+            小紅書爆款文案製造機 🔥
+        </p>
+    </header>
+
+    <!-- 主要內容區 -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-7xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- 左側：輸入表單 -->
+            <section class="lg:col-span-5 bg-white text-sparkDark p-6 md:p-8 rounded-2xl brutal-border relative">
+                <div class="absolute -top-4 -left-4 bg-sparkYellow text-sparkDark font-black px-3 py-1 text-sm border-2 border-sparkDark rounded-lg rotate-[-4deg] shadow-[2px_2px_0px_#121212]">
+                    STEP 1 填寫靈感
+                </div>
+
+                <form id="copyForm" class="space-y-5 mt-2">
+                    <!-- 產品名稱 -->
+                    <div>
+                        <label class="block text-sm font-black uppercase mb-1 flex items-center justify-between">
+                            <span>📦 產品名稱</span>
+                            <span class="text-xs text-red-500 font-normal">必填</span>
+                        </label>
+                        <input type="text" id="product" required placeholder="例如：防曬霜、美白精華..." 
+                            class="w-full px-4 py-3 rounded-xl border-2 border-sparkDark focus:outline-none focus:ring-2 focus:ring-sparkPink font-medium text-sm">
+                    </div>
+
+                    <!-- 核心賣點 -->
+                    <div>
+                        <label class="block text-sm font-black uppercase mb-1 flex items-center justify-between">
+                            <span>💡 核心賣點</span>
+                            <span class="text-xs text-gray-500 font-normal">逗號隔開</span>
+                        </label>
+                        <input type="text" id="points" placeholder="例如：不泛白, 防水, 清爽不油膩" 
+                            class="w-full px-4 py-3 rounded-xl border-2 border-sparkDark focus:outline-none focus:ring-2 focus:ring-sparkPink font-medium text-sm">
+                    </div>
+
+                    <!-- 目標受眾 -->
+                    <div>
+                        <label class="block text-sm font-black uppercase mb-1">🎯 目標受眾 (Audience)</label>
+                        <input type="text" id="audience" placeholder="例如：20-28歲女生、學生黨、職場新人" 
+                            class="w-full px-4 py-3 rounded-xl border-2 border-sparkDark focus:outline-none focus:ring-2 focus:ring-sparkPink font-medium text-sm">
+                    </div>
+
+                    <!-- 優惠活動 -->
+                    <div>
+                        <label class="block text-sm font-black uppercase mb-1">🎁 優惠/行動 (Offer)</label>
+                        <input type="text" id="offer" placeholder="例如：限時半價、下單送小樣" 
+                            class="w-full px-4 py-3 rounded-xl border-2 border-sparkDark focus:outline-none focus:ring-2 focus:ring-sparkPink font-medium text-sm">
+                    </div>
+
+                    <!-- 文案風格選擇 -->
+                    <div>
+                        <label class="block text-sm font-black uppercase mb-2">✨ 選擇文案風格 (Style)</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="style" value="种草风" checked class="peer sr-only">
+                                <div class="text-center py-3 px-2 rounded-xl border-2 border-sparkDark bg-white peer-checked:bg-sparkPink peer-checked:text-white peer-checked:shadow-[2px_2px_0px_#121212] font-black text-xs md:text-sm transition-all">
+                                    🌱 种草风
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="style" value="测评风" class="peer sr-only">
+                                <div class="text-center py-3 px-2 rounded-xl border-2 border-sparkDark bg-white peer-checked:bg-sparkPink peer-checked:text-white peer-checked:shadow-[2px_2px_0px_#121212] font-black text-xs md:text-sm transition-all">
+                                    📊 测评风
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="style" value="专业风" class="peer sr-only">
+                                <div class="text-center py-3 px-2 rounded-xl border-2 border-sparkDark bg-white peer-checked:bg-sparkPink peer-checked:text-white peer-checked:shadow-[2px_2px_0px_#121212] font-black text-xs md:text-sm transition-all">
+                                    🔬 专业风
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 提交按鈕 -->
+                    <button type="submit" id="submitBtn" 
+                        class="w-full py-4 bg-sparkYellow text-sparkDark font-black text-lg rounded-xl brutal-btn uppercase tracking-wider flex items-center justify-center space-x-2">
+                        <span>🚀 一鍵生成爆款文案</span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- 右側：結果展示區 -->
+            <section class="lg:col-span-7 flex flex-col items-center justify-center">
+                
+                <!-- 初始提示卡片 -->
+                <div id="placeholderState" class="w-full bg-[#1a1a1a] border-3 border-dashed border-gray-600 rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[450px]">
+                    <div class="text-5xl mb-4 sparkle">✨ 💅 💖</div>
+                    <h3 class="text-xl font-bold text-gray-300 mb-2">準備好收穫流量了嗎？</h3>
+                    <p class="text-sm text-gray-400 max-w-sm">在左側填寫你的產品信息並選擇風格，點擊生成後，爆款文案將在這裡華麗登場！</p>
+                </div>
+
+                <!-- 載入中狀態 -->
+                <div id="loadingState" class="hidden w-full bg-[#1a1a1a] border-3 border-sparkPink rounded-2xl p-12 text-center flex flex-col items-center justify-center min-h-[450px]">
+                    <div class="inline-block w-16 h-16 border-4 border-sparkPink border-t-sparkYellow rounded-full animate-spin mb-4"></div>
+                    <h3 class="text-lg font-black text-white tracking-widest uppercase animate-pulse">AI 正在注入靈感中...</h3>
+                    <p class="text-xs text-gray-400 mt-2">小紅書爆款密碼解碼中，請稍候</p>
+                </div>
+
+                <!-- 錯誤提示框 -->
+                <div id="errorState" class="hidden w-full bg-red-100 border-3 border-red-500 rounded-2xl p-6 text-red-700 font-bold mb-4">
+                    <p id="errorMessage">發生錯誤了！</p>
+                </div>
+
+                <!-- 成功結果展示卡片 (匹配後端單篇返回數據結構) -->
+                <div id="resultCard" class="hidden w-full spark-card rounded-2xl p-6 md:p-8 relative">
+                    <div class="absolute -top-4 -right-4 bg-sparkPink text-white font-black px-4 py-1 text-sm border-2 border-sparkDark rounded-lg rotate-[4deg] shadow-[2px_2px_0px_#121212] flex items-center space-x-1">
+                        <span id="resultStyleBadge">种草风</span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- 標題 -->
+                        <div>
+                            <span class="text-xs font-black uppercase text-gray-500 block mb-1">📌 標題 (Title)</span>
+                            <h2 id="resTitle" class="text-xl md:text-2xl font-black text-sparkDark leading-snug bg-white p-3 rounded-xl border-2 border-sparkDark">
+                                <!-- 動態填入標題 -->
+                            </h2>
+                        </div>
+
+                        <!-- 正文 -->
+                        <div>
+                            <span class="text-xs font-black uppercase text-gray-500 block mb-1">📝 正文內容 (Content)</span>
+                            <div id="resContent" class="text-sm md:text-base font-medium text-gray-800 bg-white p-4 rounded-xl border-2 border-sparkDark whitespace-pre-line leading-relaxed">
+                                <!-- 動態填入正文 -->
+                            </div>
+                        </div>
+
+                        <!-- 標籤 -->
+                        <div>
+                            <span class="text-xs font-black uppercase text-gray-500 block mb-1">🏷️ 話題標籤 (Hashtags)</span>
+                            <div id="resHashtags" class="text-sm font-bold text-sparkPink bg-white p-3 rounded-xl border-2 border-sparkDark">
+                                <!-- 動態填入標籤 -->
+                            </div>
+                        </div>
+
+                        <!-- CTA 行動號召 -->
+                        <div>
+                            <span class="text-xs font-black uppercase text-gray-500 block mb-1">🎯 行動號召 (CTA)</span>
+                            <div id="resCta" class="text-sm font-bold text-sparkDark bg-sparkYellow/40 p-3 rounded-xl border-2 border-sparkDark">
+                                <!-- 動態填入CTA -->
+                            </div>
+                        </div>
+
+                        <!-- 操作按鈕 -->
+                        <div class="pt-4 flex gap-4">
+                            <button id="copyBtn" onclick="copyResult()" 
+                                class="flex-1 py-3 bg-sparkPink text-white font-black rounded-xl brutal-btn uppercase text-sm flex items-center justify-center space-x-2">
+                                <span>📋 一鍵複製完整文案</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="w-full bg-[#0d0d0d] border-t-2 border-gray-800 text-center py-6 text-xs text-gray-500">
+        <p>SparkCopy © 2026 - Powered by Flask & Tailwind CSS. Designed for Creators. ✨</p>
+    </footer>
+
+    <!-- 自定義訊息提示框 (代替 alert) -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-sparkYellow text-sparkDark font-black px-6 py-3 rounded-xl border-3 border-sparkDark shadow-[4px_4px_0px_#121212] translate-y-32 opacity-0 transition-all duration-300 z-50">
+        <span id="toastMsg">操作成功！</span>
+    </div>
+
+    <!-- 前端互動 JavaScript -->
+    <script>
+        // 顯示自定義吐司提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = message;
+            toast.classList.remove('translate-y-32', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-32', 'opacity-0');
+            }, 2500);
+        }
+
+        // 表單提交事件監聽
+        document.getElementById('copyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // 收集表單數據
+            const product = document.getElementById('product').value.trim();
+            const points = document.getElementById('points').value.trim();
+            const audience = document.getElementById('audience').value.trim();
+            const offer = document.getElementById('offer').value.trim();
+            const style = document.querySelector('input[name="style"]:checked').value;
+
+            const payload = { product, points, audience, offer, style };
+
+            // 切換狀態視圖
+            document.getElementById('placeholderState').classList.add('hidden');
+            document.getElementById('errorState').classList.add('hidden');
+            document.getElementById('resultCard').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            try {
+                // 發送 POST 請求到 Flask 後端 /generate 接口
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                // 隱藏載入中
+                document.getElementById('loadingState').classList.add('hidden');
+
+                if (result.status === 'success') {
+                    const data = result.data;
+                    
+                    // 填入數據到結果卡片
+                    document.getElementById('resultStyleBadge').textContent = data.style || style;
+                    document.getElementById('resTitle').textContent = data.title || '';
+                    document.getElementById('resContent').textContent = data.content || '';
+                    document.getElementById('resHashtags').textContent = data.hashtags || '';
+                    document.getElementById('resCta').textContent = data.cta || '';
+
+                    // 顯示結果卡片
+                    document.getElementById('resultCard').classList.remove('hidden');
+                    showToast('🎉 文案生成成功！');
+                } else {
+                    // 後端返回失敗
+                    document.getElementById('errorMessage').textContent = result.message || '生成失敗，請稍後再試';
+                    document.getElementById('errorState').classList.remove('hidden');
+                    document.getElementById('placeholderState').classList.remove('hidden');
+                }
+
+            } catch (error) {
+                console.error('Network Error:', error);
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('errorMessage').textContent = '網絡連接錯誤，請檢查 Flask 後端是否正常運行。';
+                document.getElementById('errorState').classList.remove('hidden');
+                document.getElementById('placeholderState').classList.remove('hidden');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+        // 一鍵複製完整文案功能
+        function copyResult() {
+            const title = document.getElementById('resTitle').textContent;
+            const content = document.getElementById('resContent').textContent;
+            const hashtags = document.getElementById('resHashtags').textContent;
+            const cta = document.getElementById('resCta').textContent;
+
+            const fullText = `${title}\n\n${content}\n\n${hashtags}\n\n${cta}`;
+
+            // 使用兼容性良好的 document.execCommand 進行剪貼板複製
+            const textArea = document.createElement('textarea');
+            textArea.value = fullText;
+            textArea.style.position = 'fixed';  // 避免滾動頁面
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast('📋 完整文案已成功複製到剪貼板！');
+                } else {
+                    showToast('❌ 複製失敗，請手動複製');
+                }
+            } catch (err) {
+                console.error('Unable to copy', err);
+                showToast('❌ 複製失敗');
+            }
+
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: sparkcopy
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: DEEPSEEK_API_URL
+        value: https://api.deepseek.com/chat/completions
+      - key: DEEPSEEK_MODEL
+        value: deepseek-chat
+      - key: FLASK_DEBUG
+        value: "false"
